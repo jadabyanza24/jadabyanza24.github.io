@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JadOS | Cute Pastel Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+    </div>
+
+    <div id="top-bar" class="glass-panel-heavy">
+        <div class="top-bar-left">
+            <div class="menu-dropdown">
+                <span class="menu-item bold"><i class="ph-fill ph-heart" style="font-size: 1.1rem; color: #FF8B94; vertical-align: middle;"></i> JadOS</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="alert('JadOS Pastel Edition\nBuilt with love by Jad Abyanza Fauzan')">About JadOS</a>
+                </div>
+            </div>
+
+            <div class="menu-dropdown">
+                <span class="menu-item">File</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="openApp('explorer-app')"><i class="ph-bold ph-folder" style="margin-right: 8px; font-size: 1rem;"></i> Open File Explorer</a>
+                    <div class="divider"></div>
+                    <a href="#" onclick="openFolder('AI_Research', 'ph-brain')"><i class="ph-bold ph-brain" style="color: #FFD3B6; margin-right: 8px; font-size: 1rem;"></i> AI Research</a>
+                    <a href="#" onclick="openFolder('Figma_Design_Systems', 'ph-palette')"><i class="ph-bold ph-palette" style="color: #FF8B94; margin-right: 8px; font-size: 1rem;"></i> Figma Design</a>
+                </div>
+            </div>
+
+            <div class="menu-dropdown">
+                <span class="menu-item">Apps</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="openApp('terminal-app')"><i class="ph-bold ph-terminal-window" style="color: #A8E6CF; margin-right: 8px; font-size: 1rem;"></i> Terminal</a>
+                    <a href="#" onclick="openApp('explorer-app')"><i class="ph-bold ph-folder" style="color: #FFD3B6; margin-right: 8px; font-size: 1rem;"></i> File Explorer</a>
+                </div>
+            </div>
+
+            <span class="menu-item" onclick="openApp('terminal-app')">Help</span>
+        </div>
+        
+        <div class="top-bar-right">
+            <i class="ph-bold ph-wifi-high"></i>
+            <i class="ph-bold ph-battery-full"></i>
+            <span id="clock" class="menu-item bold"></span>
+        </div>
+    </div>
+
+    <main id="desktop">
+        <div class="desktop-icon" onclick="openApp('terminal-app')">
+            <div class="squircle-icon bg-mint">
+                <i class="ph-bold ph-terminal-window"></i>
+            </div>
+            <span>Terminal</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openFolder('AI_Research', 'ph-brain')">
+            <div class="squircle-icon bg-peach">
+                <i class="ph-bold ph-brain"></i>
+            </div>
+            <span>AI_Research</span>
+        </div>
+
+        <div class="desktop-icon" onclick="openFolder('Figma_Design_Systems', 'ph-palette')">
+            <div class="squircle-icon bg-pink">
+                <i class="ph-bold ph-palette"></i>
+            </div>
+            <span>Figma_Design</span>
+        </div>
+
+        <div class="desktop-icon" onclick="window.open('https://drive.google.com/open?id=1X6vljWe0EK5FPqpOSLqDHW3zJ2YD1hu4', '_blank')">
+            <div class="squircle-icon bg-rose">
+                <i class="ph-bold ph-file-pdf"></i>
+            </div>
+            <span>My_CV.pdf</span>
+        </div>
+    </main>
+
+    <div class="window glass-panel hidden" id="terminal-app" style="top: 15%; left: 10%; width: 700px; height: 450px;">
+        <div class="window-header">
+            <div class="window-controls">
+                <span class="control close" onclick="closeApp('terminal-app')"></span>
+                <span class="control minimize" onclick="minimizeApp('terminal-app')"></span>
+                <span class="control maximize" onclick="maximizeApp('terminal-app')"></span>
+            </div>
+            <div class="window-title"><i class="ph-bold ph-terminal-window" style="color: #A8E6CF; font-size: 1.1rem;"></i> terminal</div>
+            <div class="spacer"></div>
+        </div>
+        <div class="window-content terminal-theme">
+            <div class="terminal-body" id="terminal-output"></div>
+            <div class="terminal-input-area">
+                <span class="prompt">visitor@jados:~$&nbsp;</span>
+                <input type="text" id="terminal-input" autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </div>
+
+    <div class="window glass-panel hidden" id="explorer-app" style="top: 20%; left: 30%; width: 650px; height: 400px;">
+        <div class="window-header">
+            <div class="window-controls">
+                <span class="control close" onclick="closeApp('explorer-app')"></span>
+                <span class="control minimize" onclick="minimizeApp('explorer-app')"></span>
+                <span class="control maximize" onclick="maximizeApp('explorer-app')"></span>
+            </div>
+            <div class="window-title" id="explorer-title"><i class="ph-bold ph-folder" style="color: #FFD3B6; font-size: 1.1rem;"></i> File Explorer</div>
+            <div class="spacer"></div>
+        </div>
+        <div class="window-content explorer-theme">
+            <div class="explorer-sidebar">
+                <div class="sidebar-item" onclick="openFolder('AI_Research', 'ph-brain')"><i class="ph-bold ph-brain" style="font-size: 1.2rem; color: #FFD3B6;"></i> AI Research</div>
+                <div class="sidebar-item" onclick="openFolder('Figma_Design_Systems', 'ph-palette')"><i class="ph-bold ph-palette" style="font-size: 1.2rem; color: #FF8B94;"></i> Figma Design</div>
+            </div>
+            <div class="explorer-main" id="explorer-content"></div>
+        </div>
+    </div>
+
+    <div id="dock" class="glass-panel">
+        <div class="dock-item" onclick="openApp('terminal-app')" title="Terminal">
+            <div class="squircle-icon bg-mint dock-icon"><i class="ph-bold ph-terminal-window"></i></div>
+            <div class="dot" id="dot-terminal-app"></div>
+        </div>
+        <div class="dock-item" onclick="openApp('explorer-app')" title="File Explorer">
+            <div class="squircle-icon bg-peach dock-icon"><i class="ph-bold ph-folder"></i></div>
+            <div class="dot" id="dot-explorer-app"></div>
+        </div>
+    </div>
+
+    <div id="pixel-cat-container" onclick="pokeCat()">
+        <div class="cat-speech" id="cat-speech">Meow! 🐾</div>
+        <img src="https://media.tenor.com/NRlBKLrZg3sAAAAi/cute-kawaii.gif" alt="Cute Pixel Cat" id="pixel-cat">
+    </div>
+
+    <script src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/adryd325/oneko.js@main/oneko.js"></script>
+
+</body>
+</html>
