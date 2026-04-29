@@ -94,7 +94,7 @@ document.getElementById('terminal-app').addEventListener('click', () => {
     input.focus();
 });
 
-const welcomeMsg = `<div style="margin-bottom:1rem;"><span class="highlight">Jad_AI OS v2.0 (Pastel Edition) Initialized...</span><br>Welcome, visitor. Type <span style="color:#FF8B94; font-weight:700;">/help</span> to start.</div>`;
+const welcomeMsg = `<div style="margin-bottom:1rem;"><span class="highlight">Jad_AI OS v2.0 Initialized...</span><br>Welcome, visitor. Type <span style="color:#FF8B94; font-weight:700;">/help</span> to start.</div>`;
 output.innerHTML = welcomeMsg;
 
 input.addEventListener('keypress', (e) => {
