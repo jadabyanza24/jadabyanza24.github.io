@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Portfolio Jad Abyanza Fauzan telah pindah ke jadabyanza.vercel.app.">
+    <meta http-equiv="refresh" content="8;url=https://jadabyanza.vercel.app/">
+    <link rel="canonical" href="https://jadabyanza.vercel.app/">
+    <title>Portfolio Jad Sudah Pindah</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --forest: #173820;
+            --forest-deep: #0b2012;
+            --cream: #f1e8cf;
+            --moss: #b8ca75;
+            --coral: #ed7655;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--forest-deep);
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100svh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            color: var(--cream);
+            background:
+                radial-gradient(circle at 78% 18%, rgba(184, 202, 117, 0.16), transparent 28rem),
+                linear-gradient(145deg, var(--forest) 0%, var(--forest-deep) 72%);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            pointer-events: none;
+        }
+
+        body::before {
+            inset: auto -12vw -23vw;
+            height: min(46vw, 34rem);
+            border-radius: 50% 48% 0 0;
+            background: rgba(184, 202, 117, 0.09);
+            transform: rotate(-4deg);
+        }
+
+        body::after {
+            width: min(28rem, 62vw);
+            aspect-ratio: 1.7;
+            top: 10%;
+            right: -7%;
+            border: 1px solid rgba(241, 232, 207, 0.18);
+            border-radius: 50%;
+            transform: rotate(-12deg);
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            width: min(44rem, calc(100% - 2rem));
+            padding: clamp(2rem, 6vw, 4.5rem);
+            border: 1px solid rgba(241, 232, 207, 0.3);
+            background: rgba(11, 32, 18, 0.78);
+            box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.28);
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0 0 1.6rem;
+            color: var(--moss);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 2.5rem;
+            height: 1px;
+            background: currentColor;
+        }
+
+        h1 {
+            max-width: 10ch;
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(3.2rem, 10vw, 6.4rem);
+            font-weight: 400;
+            line-height: 0.86;
+            letter-spacing: -0.055em;
+        }
+
+        .accent {
+            color: var(--coral);
+            font-style: italic;
+        }
+
+        .description {
+            max-width: 34rem;
+            margin: clamp(1.6rem, 4vw, 2.5rem) 0 0;
+            color: rgba(241, 232, 207, 0.82);
+            font-size: clamp(1rem, 2.4vw, 1.15rem);
+            line-height: 1.7;
+        }
+
+        .destination {
+            display: inline-block;
+            margin-top: 0.55rem;
+            color: var(--cream);
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .button {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem 1.25rem;
+            color: var(--forest-deep);
+            background: var(--cream);
+            font-weight: 750;
+            text-decoration: none;
+            transition: background-color 160ms ease, transform 160ms ease;
+        }
+
+        .button:hover {
+            background: var(--moss);
+            transform: translateY(-2px);
+        }
+
+        .button:focus-visible {
+            outline: 3px solid var(--coral);
+            outline-offset: 4px;
+        }
+
+        .redirect-note {
+            margin: 0;
+            color: rgba(241, 232, 207, 0.62);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 520px) {
+            main {
+                padding: 2rem 1.5rem;
+            }
+
+            .actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .button {
+                transition: none;
+            }
+
+            .button:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <p class="eyebrow">Alamat baru</p>
+        <h1>Portfolio ini sudah <span class="accent">pindah.</span></h1>
+        <p class="description">
+            Situs lama ini tidak lagi diperbarui. Portfolio terbaru Jad Abyanza Fauzan sekarang tersedia di
+            <span class="destination">jadabyanza.vercel.app</span>
+        </p>
+        <div class="actions">
+            <a class="button" href="https://jadabyanza.vercel.app/">Buka portfolio terbaru</a>
+            <p class="redirect-note">Anda akan dialihkan otomatis dalam 8 detik.</p>
+        </div>
+    </main>
+</body>
+</html>
