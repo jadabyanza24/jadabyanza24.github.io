@@ -224,7 +224,7 @@ function ProjectMockupStage({ project }) {
                                 const showAlt = row === 0 && set === 0 && index < project.images.length;
                                 return (
                                     <div className={`mockup-tile ${phone ? 'mockup-phone' : 'mockup-desktop'}`} key={`${image.src}-${index}`}>
-                                        <Image src={image.src} alt={showAlt ? image.alt : ''} width={image.width} height={image.height} sizes={phone ? '(max-width: 520px) 42vw, 220px' : '(max-width: 520px) 78vw, 440px'} loading="eager" />
+                                        <Image src={image.src} alt={showAlt ? image.alt : ''} width={image.width} height={image.height} sizes={phone ? '(max-width: 520px) 42vw, 220px' : '(max-width: 520px) 78vw, 440px'} loading="eager" unoptimized />
                                     </div>
                                 );
                             })}
@@ -292,7 +292,7 @@ export default function Portfolio() {
     const [sceneEnabled, setSceneEnabled] = useState(true);
     const [selectedProject, setSelectedProject] = useState(null);
     const [terminalInput, setTerminalInput] = useState('');
-    const [terminalLines, setTerminalLines] = useState(['Type help to see available commands.']);
+    const [terminalLines, setTerminalLines] = useState([{ role: 'assistant', text: 'Hi, I’m Jad’s portfolio assistant. Ask me about his projects, skills, or experience.' }]);
     const menuButtonRef = useRef(null);
     const projectDialogRef = useRef(null);
     const projectTriggerRef = useRef(null);
@@ -300,6 +300,8 @@ export default function Portfolio() {
     const terminalDialog = useRef(null);
     const terminalInputRef = useRef(null);
     const terminalOutputRef = useRef(null);
+    const terminalHistoryRef = useRef([]);
+    const terminalHistoryIndexRef = useRef(-1);
     const openingRef = useRef(null);
     const catPromptRef = useRef(null);
 
@@ -644,8 +646,8 @@ export default function Portfolio() {
         projectTriggerRef.current?.focus();
     }
 
-    function addTerminalLine(text) {
-        setTerminalLines((lines) => [...lines, text]);
+    function addTerminalLine(text, role = 'assistant') {
+        setTerminalLines((lines) => [...lines, { role, text }]);
     }
 
     function runTerminalCommand(event) {
@@ -654,32 +656,77 @@ export default function Portfolio() {
         const command = rawCommand.toLowerCase().replace(/^\//, '');
         if (!command) return;
 
+        terminalHistoryRef.current = [...terminalHistoryRef.current.filter((entry) => entry !== rawCommand), rawCommand];
+        terminalHistoryIndexRef.current = terminalHistoryRef.current.length;
         setTerminalInput('');
         if (command === 'clear') {
             setTerminalLines([]);
             return;
         }
 
-        addTerminalLine(`visitor@jad:~$ ${rawCommand}`);
-        if (command === 'help') addTerminalLine('Commands: about, projects, pdf, cat, clear');
-        else if (command === 'about') addTerminalLine('Jad is a BINUS Computer Science student working across AI, UI/UX, software design, and data analytics.');
-        else if (command === 'projects') {
-            addTerminalLine('Jumping to selected work.');
+        addTerminalLine(rawCommand, 'user');
+        const matchedProject = projects.find((project) => command.includes(project.title.toLowerCase()));
+        const navigationTarget = /(?:open|go|buka|lihat|liat).*(project|proyek)/.test(command) ? 'projects'
+            : /(?:open|go|buka|lihat|liat).*timeline/.test(command) ? 'timeline'
+            : /(?:open|go|buka|lihat|liat).*(contact|kontak)/.test(command) ? 'contact'
+            : null;
+        if (command === 'help' || /bisa apa|what can you do/.test(command)) addTerminalLine('You can ask about Jad, his skills, experience, contact details, or a project by name. Say “open projects”, “open timeline”, or “open contact” to navigate.');
+        else if (/^(hi|hello|hey|halo|hai)\b/.test(command)) addTerminalLine('Hi! What would you like to know about Jad?');
+        else if (matchedProject) addTerminalLine(`${matchedProject.title} is ${matchedProject.subtitle.toLowerCase()}. Jad worked as ${matchedProject.role}. ${matchedProject.summary}`);
+        else if (/about|whoami|siapa|tentang jad/.test(command)) addTerminalLine('Jad is an AI-focused Computer Science student at BINUS University who works across machine learning, UI/UX, software design, and data analytics.');
+        else if (/skills?|keahlian|kemampuan/.test(command)) addTerminalLine('Jad’s core areas are UI/UX, machine learning, software design, and data analytics.');
+        else if (navigationTarget) {
+            addTerminalLine(`Opening ${navigationTarget}.`);
             terminalDialog.current?.close();
-            document.querySelector('#work')?.scrollIntoView({ behavior: catLocked ? 'auto' : 'smooth' });
-        } else if (command === 'pdf') {
-            addTerminalLine('Downloading the academic portfolio PDF.');
+            document.querySelector(navigationTarget === 'projects' ? '#work' : `#${navigationTarget}`)?.scrollIntoView({ behavior: catLocked ? 'auto' : 'smooth' });
+        }
+        else if (/projects?|proyek/.test(command) && !/^(open|go|buka)/.test(command)) addTerminalLine(`Jad’s featured projects are ${projects.map((project) => project.title).join(', ')}. Ask me about any project by name.`);
+        else if (/experience|pengalaman|organisasi|volunteer/.test(command)) addTerminalLine('Jad has led research and design work at HIMTI BINUS and contributed to organization and volunteer programs since 2024. Say “open timeline” to see the full record.');
+        else if (/contact|kontak|email|linkedin/.test(command) && !/^(open|go|buka)/.test(command)) addTerminalLine('You can reach Jad at jad.fauzan@binus.ac.id or through LinkedIn in the contact section.');
+        else if (/pdf|portfolio(?:nya)?|portofolio(?:nya)?/.test(command)) {
+            const view = /lihat|liat|view|open|buka/.test(command);
+            addTerminalLine(view ? 'Opening the academic portfolio PDF.' : 'Downloading the academic portfolio PDF.');
+            if (view) {
+                window.open(pdfPath, '_blank', 'noopener,noreferrer');
+                return;
+            }
             const link = document.createElement('a');
             link.href = pdfPath;
             link.download = '';
             link.click();
-        } else if (command === 'cat') {
+        } else if (/(?:cv|resume)(?:nya)?/.test(command)) {
+            const view = /lihat|liat|view|open|buka/.test(command);
+            addTerminalLine(view ? 'Opening Jad’s CV.' : 'Downloading Jad’s CV.');
+            if (view) {
+                window.open(cvPath, '_blank', 'noopener,noreferrer');
+                return;
+            }
+            const link = document.createElement('a');
+            link.href = cvPath;
+            link.download = '';
+            link.click();
+        } else if (/^(cat|kucing)$/.test(command)) {
             if (catLocked) addTerminalLine('Pixel cat is paused because reduced motion is enabled.');
             else {
                 setCatPreference(!catEnabled);
                 addTerminalLine(`Pixel cat turned ${catEnabled ? 'off' : 'on'}.`);
             }
-        } else addTerminalLine(`Unknown command: ${command}. Type help.`);
+        } else if (/^(scene|3d)$/.test(command)) {
+            toggleScene();
+            addTerminalLine(`3D scene turned ${sceneEnabled ? 'off' : 'on'}.`);
+        } else if (/^(date|time|tanggal|waktu)$/.test(command)) addTerminalLine(new Date().toLocaleString());
+        else if (command.startsWith('echo ')) addTerminalLine(rawCommand.slice(rawCommand.indexOf(' ') + 1));
+        else addTerminalLine('I don’t know that yet. Try asking about Jad’s projects, skills, experience, or contact details.');
+    }
+
+    function browseTerminalHistory(event) {
+        if (!['ArrowUp', 'ArrowDown'].includes(event.key) || terminalHistoryRef.current.length === 0) return;
+        event.preventDefault();
+        const lastIndex = terminalHistoryRef.current.length - 1;
+        terminalHistoryIndexRef.current = event.key === 'ArrowUp'
+            ? Math.max(0, terminalHistoryIndexRef.current - 1)
+            : Math.min(lastIndex + 1, terminalHistoryIndexRef.current + 1);
+        setTerminalInput(terminalHistoryIndexRef.current > lastIndex ? '' : terminalHistoryRef.current[terminalHistoryIndexRef.current]);
     }
 
     return (
@@ -712,7 +759,7 @@ export default function Portfolio() {
                     <a className="nav-download" href={pdfPath} download>PDF</a>
                 </nav>
                 <div className="header-tools" aria-label="Page tools">
-                    <button className="tool-button" type="button" onClick={openTerminal}>Terminal</button>
+                    <button className="tool-button" type="button" onClick={openTerminal}>Assistant</button>
                     <button className="tool-button" type="button" aria-pressed={sceneEnabled} onClick={toggleScene}>3D: {sceneEnabled ? 'on' : 'off'}</button>
                     <button className="tool-button" type="button" aria-pressed={catEnabled} disabled={catLocked} onClick={() => setCatPreference(!catEnabled)}>{catLocked ? 'Cat: paused' : `Cat: ${catEnabled ? 'on' : 'off'}`}</button>
                 </div>
@@ -756,7 +803,9 @@ export default function Portfolio() {
                                 <li className={`timeline-item${item.image ? '' : ' timeline-item-text-only'}`} data-category={item.category} key={`${item.period}-${item.title}`}>
                                     {item.image && (
                                         <div className="timeline-image">
-                                            <Image src={item.image.src} alt={item.image.alt} fill sizes="(max-width: 780px) calc(100vw - 5rem), 340px" style={item.image.position ? { objectPosition: item.image.position } : undefined} />
+                                            <div className="timeline-image-sharp">
+                                                <Image src={item.image.src} alt={item.image.alt} fill unoptimized loading="eager" sizes="(max-width: 780px) 82vw, 360px" style={item.image.position ? { objectPosition: item.image.position } : undefined} />
+                                            </div>
                                         </div>
                                     )}
                                     {!item.image && (
@@ -764,8 +813,8 @@ export default function Portfolio() {
                                             <span>Creative</span><strong>&amp;</strong><span>Design</span>
                                         </div>
                                     )}
+                                    <p className="timeline-category">{item.category}</p>
                                     <div className="timeline-item-copy">
-                                        <p className="timeline-category">{item.category}</p>
                                         <p className="timeline-period">{item.period}</p>
                                         <div className="timeline-item-details">
                                             <h3>{item.title}</h3>
@@ -789,7 +838,7 @@ export default function Portfolio() {
                     <div className="project-menu" aria-label="Selected projects">
                         {projects.map((project, index) => (
                             <button key={project.id} className={`project-button project-${project.color}`} type="button" onClick={(event) => openProject(project, event.currentTarget)}>
-                                <Image className="project-card-image" src={project.images[0].src} alt="" fill sizes="(max-width: 520px) 82vw, (max-width: 1100px) 44vw, 31vw" />
+                                <Image className="project-card-image" src={project.images[0].src} alt="" fill unoptimized sizes="(max-width: 520px) 82vw, (max-width: 1100px) 44vw, 31vw" />
                                 <span className="project-card-number" aria-hidden="true">0{index + 1}</span>
                                 <span className="project-button-action">View case</span>
                                 <span className="project-button-copy">
@@ -836,16 +885,18 @@ export default function Portfolio() {
                 if (event.target === terminalDialog.current) terminalDialog.current.close();
             }}>
                 <div className="terminal-bar">
-                    <h2 id="terminal-title">Jad terminal</h2>
-                    <button type="button" aria-label="Close terminal" onClick={() => terminalDialog.current?.close()}>Close</button>
+                    <h2 id="terminal-title">Jad portfolio assistant</h2>
+                    <button type="button" aria-label="Close assistant" onClick={() => terminalDialog.current?.close()}>Close</button>
                 </div>
                 <div ref={terminalOutputRef} className="terminal-output" role="log" aria-live="polite">
-                    {terminalLines.map((line, index) => <p key={`${line}-${index}`}>{line}</p>)}
+                    {terminalLines.map((line, index) => <p className={`terminal-message terminal-message-${line.role}`} key={`${line.text}-${index}`}>{line.text}</p>)}
                 </div>
                 <form className="terminal-form" onSubmit={runTerminalCommand}>
-                    <label htmlFor="terminal-input">visitor@jad:~$</label>
-                    <input ref={terminalInputRef} id="terminal-input" name="command" type="text" autoComplete="off" spellCheck="false" value={terminalInput} onChange={(event) => setTerminalInput(event.target.value)} />
+                    <label htmlFor="terminal-input">You</label>
+                    <input ref={terminalInputRef} id="terminal-input" name="command" type="text" autoComplete="off" spellCheck="false" placeholder="Ask about Jad…" aria-describedby="terminal-hint" value={terminalInput} onChange={(event) => setTerminalInput(event.target.value)} onKeyDown={browseTerminalHistory} />
+                    <button type="submit">Send</button>
                 </form>
+                <p id="terminal-hint" className="terminal-hint">Ask naturally · Use ↑ and ↓ for message history</p>
             </dialog>
 
             <Script src="/oneko.js" data-cat="/assets/oneko.gif" data-persist-position="true" strategy="afterInteractive" />
